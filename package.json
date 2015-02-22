@@ -1,0 +1,12 @@
+{
+  "name": "sphereable-product",
+  "version": "0.1.0",
+  "description": "API service to communicate with MongoDB and CloudSearch",
+  "private": true,
+  "dependencies": {
+    "node-uuid": "*",
+    "request": "*",
+    "aws-sdk": "*",
+    "q": "*"
+  }
+}
