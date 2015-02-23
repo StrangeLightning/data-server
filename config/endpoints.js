@@ -24,5 +24,5 @@ exports.cloudsearch = new AWS.CloudSearch({
   apiVersion: '2013-01-01'
 });
 
-exports.domain = "imorgo";
-exports.toDomain = "imorgo-search";
+exports.domain = "sphereable";
+//exports.toDomain = "imorgo-search";
