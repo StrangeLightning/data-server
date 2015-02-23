@@ -2,14 +2,14 @@ var AWS = require('aws-sdk');
 var config;
 
 try {
-  config = require("./config.js");
+  config = require("./environment");
 } catch(e) {
   console.log(e);
 }
 
 AWS.config.update({
-  accessKeyId: process.env.ACCESS_KEY_ID || config.accessKeyId,
-  secretAccessKey:  process.env.SECRET_ACCESS_KEY || config.secretAccessKey,
+  accessKeyId: process.env.ACCESS_KEY_ID || config.amazon.cloudsearchAmazonId,
+  secretAccessKey:  process.env.SECRET_ACCESS_KEY || config.amazon.cloudsearchAmazonSecret,
   region: 'us-west-2'
 });
 
@@ -25,4 +25,3 @@ exports.cloudsearch = new AWS.CloudSearch({
 });
 
 exports.domain = "sphereable";
-//exports.toDomain = "imorgo-search";
