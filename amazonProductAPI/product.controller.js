@@ -1,9 +1,9 @@
 'use strict';
 
-var config = require('../../config/environment');
+var config = require(__dirname + '/../config/environment');
 var OperationHelper = require('apac').OperationHelper;
 
-exports.searchCart = function(callback) {
+exports.searchCart = function(pageNo, callback) {
   var opHelper = new OperationHelper({
     awsId: config.amazon.clientID,
     awsSecret: config.amazon.clientSecret,
@@ -13,8 +13,7 @@ exports.searchCart = function(callback) {
   opHelper.execute('ItemSearch', {
     'Keywords': 'toys',
     'SearchIndex': 'Blended',
-    'ItemPage': '1',
-    'TruncateReviewsAt': '0',
+    'ItemPage': pageNo,
     'Availability': 'Available',
     'ResponseGroup': 'Similarities,ItemIds,ItemAttributes,Images,Reviews,Offers'
   }, callback);

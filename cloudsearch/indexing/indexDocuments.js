@@ -1,8 +1,8 @@
 // This script indexes documents in Cloudsearch.
 var csd = require(__dirname + '/cloudsearchifyDocuments.js');
-var cloudsearchdomain = require(__dirname + "/../config/endpoints").cloudsearchdomain;
-var amazonProductApi = require("../../../amazonProductAPI/product.controller.js");
-var numberOfDocuments = 10000;
+var cloudsearchdomain = require(__dirname + "/../../config/endpoints").cloudsearchdomain;
+var amazonProductApi = require(__dirname + "/../../amazonProductAPI/product.controller");
+var numberOfDocuments = 100000;
 
 var count = 0;
 exports.indexDocuments = function(data) {
@@ -22,12 +22,21 @@ exports.indexDocuments = function(data) {
   });
 };
 
-var recurse = function(i) {
+var uniqueProductsContainer = {};
+var recurse = function(pageNo) {
 
-  amazonProductApi.searchCart(function(err, results) {
+  // retrieve products from amazon products api
+  amazonProductApi.searchCart(pageNo, function(err, results) {
     var _results = [];
     var r2 = results.ItemSearchResponse.Items[0].Item;
-    while(_results.length < 12 && r2 && r2[i]) {
+
+    // Log errors, if any
+    if(results.ItemSearchResponse.Items[0].Request[0].Errors) {
+      console.log(results.ItemSearchResponse.Items[0].Request[0].Errors[0].Error[0].Message[0]);
+    }
+
+    var i = 0;
+    while(r2 && r2[i] && i < r2.length) {
       var obj = r2[i];
       var product = {};
 
@@ -41,28 +50,51 @@ var recurse = function(i) {
         obj.Offers &&
         obj.Offers[0].TotalOffers &&
         +obj.Offers[0].TotalOffers[0] > 0) {
-        product.id = obj.ASIN[0];
-        product.price = obj.ItemAttributes[0].ListPrice[0].FormattedPrice[0];
-        product.title = obj.ItemAttributes[0].Title[0];
-        product.mediumImage = obj.MediumImage[0].URL[0];
-        product.reviews = obj.CustomerReviews[0].IFrameURL[0];
-        _results.push(product);
-        numberOfDocuments--;
+
+        // filter out adult products, like dildos
+        if(!(obj.ItemAttributes[0].IsAdultProduct && obj.ItemAttributes[0].IsAdultProduct[0] === "1")) {
+
+          //filter out duplicate 'items' sold by different vendors
+          if(!uniqueProductsContainer[obj.ASIN[0]]) {
+            uniqueProductsContainer[obj.ASIN[0]] = true;
+
+            // build product entry to return to client
+            product.product_id = obj.ASIN[0];
+            product.price = parseInt(obj.ItemAttributes[0].ListPrice[0].Amount[0] / 100, 10);
+            product.title = obj.ItemAttributes[0].Title[0];
+            product.img_url = obj.MediumImage[0].URL[0];
+            product.prod_attributes = JSON.stringify(obj.ItemAttributes[0]);
+            product.category = obj.ItemAttributes[0].ProductGroup[0];
+
+            _results.push(product);
+
+            //decrement number of total documents we want to return
+            numberOfDocuments--;
+          }
+        }
       }
+
+      //increment counter within while loop
       i++;
-    }
 
-    exports.indexDocuments(_results);
+      //base case - when 12 search items have been built
+      if(i === r2.length - 1) {
+        if(_results.length > 0){
+          exports.indexDocuments(_results);
+        }
 
-    if(numberOfDocuments > 0) {
-      recurse(i + 1)
-    } else {
-      process.exit();
+        // if we have not reached the number of documents to index, continue fetching documents from amazon product api
+        if(numberOfDocuments > 0) {
+          recurse(pageNo + 1);
+        } else {
+          process.exit();
+        }
+      }
     }
   });
 };
 
-recurse(0);
+recurse(1);
 
 
 
