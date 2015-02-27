@@ -1,6 +1,6 @@
 // This script deletes documents from Cloudsearch.
 // **Limit is deleting 10000 documents at a time.
-var cloudsearchdomain = require(__dirname + "/../config/endpoints").cloudsearchdomain;
+var cloudsearchdomain = require(__dirname + "/../../config/endpoints").cloudsearchdomain;
 var totalDeletes = 0;
 
 var numberToDelete = 1000;

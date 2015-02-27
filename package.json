@@ -4,9 +4,11 @@
   "description": "API service to communicate with MongoDB and CloudSearch",
   "private": true,
   "dependencies": {
-    "node-uuid": "*",
-    "request": "*",
+    "apac": "^1.0.0",
     "aws-sdk": "*",
-    "q": "*"
+    "lodash": "^3.3.1",
+    "node-uuid": "*",
+    "q": "*",
+    "request": "*"
   }
 }
