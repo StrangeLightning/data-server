@@ -19,3 +19,18 @@ exports.searchCart = function(pageNo, callback) {
   }, callback);
 };
 
+
+exports.lookup = function(ASIN, callback) {
+  var opHelper = new OperationHelper({
+    awsId: config.amazon.clientID,
+    awsSecret: config.amazon.clientSecret,
+    assocId: config.amazon.clientAccount
+  });
+
+  opHelper.execute('ItemLookup', {
+    'ItemId': ASIN + '',
+    'Condition': 'New',
+    'Availability': 'Available',
+    'ResponseGroup': 'Similarities,ItemIds,ItemAttributes,Images,Reviews,Offers'
+  }, callback);
+};
