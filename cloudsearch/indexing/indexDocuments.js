@@ -120,6 +120,11 @@ recurse = function(pageNo) {
             product.prod_attributes = JSON.stringify(obj.ItemAttributes[0]);
             product.category = obj.ItemAttributes[0].ProductGroup[0];
 
+            // add coordinates to place products on screen as 3d models
+            product.x = 0;
+            product.y = 0;
+            product.z = 0;
+
             _results.push(product);
 
             //decrement number of total documents we want to return
