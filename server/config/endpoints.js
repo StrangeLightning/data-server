@@ -2,7 +2,7 @@ var AWS = require('aws-sdk');
 var config;
 
 try {
-  config = require("./environment");
+  config = require("./environment/index");
 } catch(e) {
   console.log(e);
 }
