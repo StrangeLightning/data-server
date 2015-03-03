@@ -48,7 +48,7 @@ var recurse = function(pageNo) {
     var i = 0;
     var flag = false;
     console.log(r2.length);
-    while(r2 && r2[i] && i < r2.length && !flag) {
+    while(r2 && r2[i] && i < r2.length && i < 15) {
       var obj = r2[i];
       var product = {};
 
@@ -99,7 +99,6 @@ var recurse = function(pageNo) {
                   q.push(e.ASIN);
                 }
             })
-            processQ(0);
             //decrement number of total documents we want to return
             numberOfDocuments--;
           }
@@ -125,6 +124,8 @@ var recurse = function(pageNo) {
       //   }
       // }
     }
+    console.log(q.length, "Queue");
+    processQ(0);
   });
 };
 
@@ -136,7 +137,7 @@ recurse(1);
   // }
 var someC = 0;
 function processQ(index) {
-  // console.log("ParCount", parCount);
+  console.log("ParCount");
   this.index = index;
   var someC = 0;
   q.forEach(function(e) {
@@ -144,7 +145,7 @@ function processQ(index) {
       someC++;
     }
   });
-  console.log("INDEX", index, seenHash, someC, q);
+  // console.log("INDEX", index, seenHash, someC, q);
   setTimeout(function(){
     var e = q[index];
     console.log("INDEX", e);
@@ -183,16 +184,20 @@ function processQ(index) {
               if(!uniqueProductsContainer[obj.ASIN[0]]) {
                 uniqueProductsContainer[obj.ASIN[0]] = true;
                 // similarHash[obj.ASIN[0]] = obj.SimilarProducts[0].SimilarProduct;
+                var someFlag = false;
                 var newArray = obj.SimilarProducts[0].SimilarProduct.map(function(e) {
                   e.linkASIN = obj.ASIN[0];
                   e.ASIN = e.ASIN[0];
                   console.log(e.ASIN in seenHash)
                   if (!(e.ASIN in seenHash)) {
                     seenHash[e.ASIN] = true;
+                    someFlag = true;
                     q.push(e.ASIN);
                   }
                   return e;
                 });
+                // if (!someFlag) {throw new Error('flag did not toggle')}
+                if (!someFlag) {console.log('flag did not toggle')}
                 // console.log(newArray.length, "newArray.length", newArray.map(function(e) {return e.ASIN}));
                 // for (var i = 0; i < newArray.length; i++) {
                 //   if (newArray[i].ASIN in seenHash) {
@@ -238,7 +243,6 @@ function processQ(index) {
 
                 //decrement number of total documents we want to return
                 numberOfDocuments--;
-                processQ(this.index + 1);
                 //
                 // console.log("i", i);
               }
@@ -249,6 +253,8 @@ function processQ(index) {
         //   console.log("TOTAL TIME:", new Date().getTime() - t);
         //   process.exit();
         // }
+        console.log('ONE CALL NOW', this.index, q.length);
+        processQ(this.index + 1);
       }.bind(this));
     }
   }.bind(this), 1250);
