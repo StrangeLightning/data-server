@@ -3,7 +3,7 @@ var csd = require(__dirname + '/cloudsearchifyDocuments.js');
 var cloudsearchdomain = require(__dirname + "/../../config/endpoints").cloudsearchdomain;
 var amazonProductApi = require(__dirname + "/../../amazonProductAPI/product.controller");
 
-var graphyc = require('../../graphyc.js');
+var graphyc = require('../../../graphyc.js');
 var numberOfDocuments = 50;
 var similarHash = {};
 var q = [];
@@ -17,7 +17,7 @@ var parCount = 0;
 var t = new Date().getTime();
 console.log(t);
 var adjacencyList = [];
-
+var graph = new graphyc.Graph([]);
 var numberOfDocuments = 100000;
 var count = 0;
 var uniqueProductsContainer = {};
@@ -176,7 +176,7 @@ recurse = function(pageNo) {
 };
 
 recurse(1);
-
+console.log('recurse');
 var someC = 0;
 function processQ(index) {
   console.log("ParCount");
@@ -244,7 +244,7 @@ function processQ(index) {
                   return seenHash[e];
                 })
                 graph.add([orderedProducts[this.index], simProds]);
-
+                exports.indexDocuments(graph.al[graph.al.length - 1]);
                 if (!someFlag) {console.log('flag did not toggle')}
 
                 product.product_id = obj.ASIN[0];
