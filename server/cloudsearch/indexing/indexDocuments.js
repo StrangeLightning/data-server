@@ -150,11 +150,7 @@ recurse = function(pageNo) {
             product.z = 0;
 
             _results.push(product);
-            // var index = graph.al.length;
-            // graph.al[index] = [product, simArray];
-            // similarHash[hashCount] = product.product_id;
-            // similarHT[product.product_id] = hashCount;
-            // simArray.push(product);
+
             hashCount++;
             flag = true;
             simArray.forEach(function(e, i) {
@@ -173,22 +169,6 @@ recurse = function(pageNo) {
 
       //increment counter within while loop
       i++;
-      // console.log(simArray.length);
-      // //base case - when 12 search items have been built
-      // if(i === r2.length - 1 || 1) {
-      //   // if(_results.length > 0){
-      //   //   exports.indexDocuments(_results);
-      //   // }
-
-      //   // if we have not reached the number of documents to index, continue fetching documents from amazon product api
-      //   if(numberOfDocuments > 0 && 0) {
-      //     recurse(pageNo + 1);
-      //   } else {
-      //     // console.log(similarHash, Object.keys(similarHash).length, simArray);
-      //     var counter = 0;
-
-      //   }
-      // }
     }
     console.log(q.length, "Queue");
     processQ(0);
@@ -197,10 +177,6 @@ recurse = function(pageNo) {
 
 recurse(1);
 
-  // amazonProductApi.lookup()
-  // while(simArray.length) {
-    
-  // }
 var someC = 0;
 function processQ(index) {
   console.log("ParCount");
@@ -211,7 +187,6 @@ function processQ(index) {
       someC++;
     }
   });
-  // console.log("INDEX", index, seenHash, someC, q);
   setTimeout(function(){
     var e = q[index];
     var element = q[index]
@@ -269,23 +244,9 @@ function processQ(index) {
                   return seenHash[e];
                 })
                 graph.add([orderedProducts[this.index], simProds]);
-                // if (!someFlag) {throw new Error('flag did not toggle')}
+
                 if (!someFlag) {console.log('flag did not toggle')}
-                // console.log(newArray.length, "newArray.length", newArray.map(function(e) {return e.ASIN}));
-                // for (var i = 0; i < newArray.length; i++) {
-                //   if (newArray[i].ASIN in seenHash) {
-                //     // console.log(newArray[i].ASIN)
-                //     newArray.splice(i, 1);
-                //   }
-                //   else {
-                //     j++;
-                //     q.push(newArray[i]);
-                //     console.log(q.map(function(e) {return e.ASIN}))
-                //   }
-                // }
-                // console.log(newArray.length, "Added to the q");
-                // simArray = simArray.concat(newArray);
-                // build product entry to return to client
+
                 product.product_id = obj.ASIN[0];
                 product.price = parseInt(obj.ItemAttributes[0].ListPrice[0].Amount[0] / 100, 10);
                 product.title = obj.ItemAttributes[0].Title[0];
@@ -293,24 +254,10 @@ function processQ(index) {
                 product.prod_attributes = JSON.stringify(obj.ItemAttributes[0]);
                 product.category = obj.ItemAttributes[0].ProductGroup[0];
 
-                //_results.push(product);
                 similarHash[hashCount] = product.product_id;
                 similarHT[product.product_id] = hashCount;
                 hashCount++;
-                // console.log(graph.al);
-                // if (index % 15 === 0) {
-                //   console.log(graph.al[index]);
-                // }
-                // if ((index-1) % 15 === 0) {
-                //   console.log(similarHash);
-                // }
-                // if ((index) % 145 === 0) {
-                //   console.log(graph.al);
-                // }
-                // newArray.forEach(function(e,index,a) {
-                //   console.log(i * 5 + index, "in new array", e.ASIN);
-                //   getMore(e, i * 5 + index, _results);
-                // });
+
 
                 //decrement number of total documents we want to return
                 numberOfDocuments--;
