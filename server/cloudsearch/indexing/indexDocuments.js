@@ -2,7 +2,7 @@
 var csd = require(__dirname + '/cloudsearchifyDocuments.js');
 var cloudsearchdomain = require(__dirname + "/../../config/endpoints").cloudsearchdomain;
 var amazonProductApi = require(__dirname + "/../../amazonProductAPI/product.controller");
-<<<<<<< HEAD:cloudsearch/indexing/indexDocuments.js
+
 var graphyc = require('../../graphyc.js');
 var numberOfDocuments = 50;
 var similarHash = {};
@@ -17,13 +17,11 @@ var parCount = 0;
 var t = new Date().getTime();
 console.log(t);
 var adjacencyList = [];
-var graph = new graphyc.Graph([]);
-=======
+
 var numberOfDocuments = 100000;
 var count = 0;
 var uniqueProductsContainer = {};
 
->>>>>>> 0c517d2799246e5eef80c1583dbdcd401dce9659:server/cloudsearch/indexing/indexDocuments.js
 exports.indexDocuments = function(data) {
   var params = {
     contentType: 'application/json',
