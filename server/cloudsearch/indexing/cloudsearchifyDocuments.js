@@ -35,6 +35,7 @@ exports.cloudsearchifyDocuments = function(allProducts) {
     };
 
     csProduct["fields"] = product;
+    console.log(csProduct);
     csAllProducts.push(csProduct);
   });
 

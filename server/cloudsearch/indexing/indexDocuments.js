@@ -24,7 +24,9 @@ var uniqueProductsContainer = {};
 
 exports.indexDocuments = function(data) {
   var obj = data[0];
-  obj.adjacencyList = data[1];
+  obj.adjacency_list = data[1];
+  obj = [obj];
+  console.log(obj);
   var params = {
     contentType: 'application/json',
     documents: csd.cloudsearchifyDocuments(obj)
@@ -152,6 +154,7 @@ recurse = function(pageNo) {
             product.z = 0;
 
             _results.push(product);
+            orderedProducts.push(product);
 
             hashCount++;
             flag = true;
@@ -207,7 +210,6 @@ function processQ(index) {
           }
 
           var obj = r2[0];
-          var product = {};
           // Sometimes no ItemAttributes Returned
           if(obj.ItemAttributes &&
             obj.ItemAttributes[0].ListPrice &&
@@ -233,8 +235,10 @@ function processQ(index) {
                 var newArray = obj.SimilarProducts[0].SimilarProduct.map(function(e) {
                   e.linkASIN = obj.ASIN[0];
                   e.ASIN = e.ASIN[0];
+                  e.Title = e.Title[0];
                   simProds.push(e.ASIN)
                   if (!(e.ASIN in seenHash)) {
+                    var product = {};
                     seenHash[e.ASIN] = q.length;
                     someFlag = true;
                     q.push(e.ASIN);
@@ -242,19 +246,24 @@ function processQ(index) {
                   }
                   return e;
                 });
+
                 var simProds = simProds.map(function(e) {
                   return seenHash[e];
                 })
-                graph.add([orderedProducts[this.index], simProds]);
-                exports.indexDocuments(graph.al[graph.al.length - 1]);
-                if (!someFlag) {console.log('flag did not toggle')}
 
+                if (!someFlag) {console.log('flag did not toggle')}
+                var product = {};
                 product.product_id = obj.ASIN[0];
                 product.price = parseInt(obj.ItemAttributes[0].ListPrice[0].Amount[0] / 100, 10);
                 product.title = obj.ItemAttributes[0].Title[0];
                 product.img_url = obj.MediumImage[0].URL[0];
                 product.prod_attributes = JSON.stringify(obj.ItemAttributes[0]);
                 product.category = obj.ItemAttributes[0].ProductGroup[0];
+
+                // Add to orderedProducts and graph
+                orderedProducts[this.index] = product;
+                graph.add([orderedProducts[this.index], simProds]);
+                exports.indexDocuments(graph.al[graph.al.length - 1]);
 
                 similarHash[hashCount] = product.product_id;
                 similarHT[product.product_id] = hashCount;
