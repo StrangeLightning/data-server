@@ -1,3 +1,3 @@
 node_modules
-config/local.env.js
+server/config/local.env.js
 npm-debug.log

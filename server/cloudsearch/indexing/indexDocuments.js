@@ -2,6 +2,7 @@
 var csd = require(__dirname + '/cloudsearchifyDocuments.js');
 var cloudsearchdomain = require(__dirname + "/../../config/endpoints").cloudsearchdomain;
 var amazonProductApi = require(__dirname + "/../../amazonProductAPI/product.controller");
+<<<<<<< HEAD:cloudsearch/indexing/indexDocuments.js
 var graphyc = require('../../graphyc.js');
 var numberOfDocuments = 50;
 var similarHash = {};
@@ -17,6 +18,12 @@ var t = new Date().getTime();
 console.log(t);
 var adjacencyList = [];
 var graph = new graphyc.Graph([]);
+=======
+var numberOfDocuments = 100000;
+var count = 0;
+var uniqueProductsContainer = {};
+
+>>>>>>> 0c517d2799246e5eef80c1583dbdcd401dce9659:server/cloudsearch/indexing/indexDocuments.js
 exports.indexDocuments = function(data) {
   var params = {
     contentType: 'application/json',
@@ -34,8 +41,61 @@ exports.indexDocuments = function(data) {
   });
 };
 
-var uniqueProductsContainer = {};
-var recurse = function(pageNo) {
+// Expecting: [[{product},[1,5,3,..],[{product},[1,5,3,..]...]
+// add x, y, z coordinates to products that orients the products in the 3D world based on the popularity of a single product,
+// and then webbing related products out from there
+var insertModelCoordinates = function(productObjectPlusAdjacencyListArray, products) {
+  products = products || [];
+
+  // base case - initially one most popular product with 5 similar products, each with 5 similar, each with similar
+  // so 1 + 5 * 5 * 5 = 126
+  if(products.length > 126){
+    return products;
+  }
+
+  productObjectPlusAdjacencyListArray.forEach(function(productObjectPlusAdjacencyList){
+    var originalProduct = productObjectPlusAdjacencyList[0];
+    var adjacencyList = productObjectPlusAdjacencyList[1];
+    var productIndex;
+
+    // add original product to products to return
+    originalProduct = addCoordinatesToProduct(originalProduct, 0, 0, 0);
+    products.push(originalProduct);
+
+    // dequeue products from adjacency list and add coordinates to those products
+    var i = 0;
+    while(productIndex = adjacencyList.pop()){
+      // assuming 5 products in adjacency list, create the following coordinates:
+      //[1,0,0], [0,1,0], [0,0,1], [-1,0,0], [0,-1,0],
+      var coordinates = [0,0,0];
+      coordinates[i % 3] = i < 3 ? 1 : -1;
+      var relatedProductObjectPlusAdjacencyList = productObjectPlusAdjacencyListArray[productIndex];
+
+      // recurse through related product
+      insertModelCoordinates(relatedProductObjectPlusAdjacencyList);
+
+      // add coordinates to related product
+      relatedProductObjectPlusAdjacencyList = addCoordinatesToProduct(relatedProductObjectPlusAdjacencyList, coordinates[0], coordinates[1], coordinates[2]);
+
+      // add related product from adjacency list to products to return
+      products.push(relatedProductObjectPlusAdjacencyList);
+      i++;
+    }
+  });
+};
+
+// helper function to add coordinates to product
+var addCoordinatesToProduct = function(relatedProductObjectPlusAdjacencyList, x, y, z){
+  relatedProductObjectPlusAdjacencyList[0].coordinates = {
+    x: x,
+    y: y,
+    z: z
+  };
+
+  return relatedProductObjectPlusAdjacencyList;
+};
+
+recurse = function(pageNo) {
 
   // retrieve products from amazon products api
   amazonProductApi.searchCart(pageNo, function(err, results) {
@@ -85,6 +145,11 @@ var recurse = function(pageNo) {
             product.img_url = obj.MediumImage[0].URL[0];
             product.prod_attributes = JSON.stringify(obj.ItemAttributes[0]);
             product.category = obj.ItemAttributes[0].ProductGroup[0];
+
+            // add coordinates to place products on screen as 3d models
+            product.x = 0;
+            product.y = 0;
+            product.z = 0;
 
             _results.push(product);
             // var index = graph.al.length;
