@@ -6,6 +6,7 @@ var graphyc = require('../../graphyc.js');
 var numberOfDocuments = 50;
 var similarHash = {};
 var q = [];
+var orderedProducts = [];
 var hashCount = 0;
 var similarHT = {};
 var seenHash = {};
@@ -15,7 +16,7 @@ var parCount = 0;
 var t = new Date().getTime();
 console.log(t);
 var adjacencyList = [];
-var graph = new graphyc.Graph(null, numberOfDocuments);
+var graph = new graphyc.Graph([]);
 exports.indexDocuments = function(data) {
   var params = {
     contentType: 'application/json',
@@ -86,19 +87,21 @@ var recurse = function(pageNo) {
             product.category = obj.ItemAttributes[0].ProductGroup[0];
 
             _results.push(product);
-            var index = graph.al.length;
-            graph.al[index] = [product, simArray];
-            similarHash[hashCount] = product.product_id;
-            similarHT[product.product_id] = hashCount;
+            // var index = graph.al.length;
+            // graph.al[index] = [product, simArray];
+            // similarHash[hashCount] = product.product_id;
+            // similarHT[product.product_id] = hashCount;
             // simArray.push(product);
             hashCount++;
             flag = true;
             simArray.forEach(function(e, i) {
                 if (!(e.ASIN in seenHash)) {
-                  seenHash[e.ASIN] = true;
+                  seenHash[e.ASIN] = q.length;
                   q.push(e.ASIN);
+                  orderedProducts.push(e);
+                  // graph.add(e, [])
                 }
-            })
+            });
             //decrement number of total documents we want to return
             numberOfDocuments--;
           }
@@ -148,6 +151,7 @@ function processQ(index) {
   // console.log("INDEX", index, seenHash, someC, q);
   setTimeout(function(){
     var e = q[index];
+    var element = q[index]
     console.log("INDEX", e);
     if (!(e in seenHash) || 1){
       amazonProductApi.lookup(e, function(err, results) {
@@ -185,17 +189,23 @@ function processQ(index) {
                 uniqueProductsContainer[obj.ASIN[0]] = true;
                 // similarHash[obj.ASIN[0]] = obj.SimilarProducts[0].SimilarProduct;
                 var someFlag = false;
+                var simProds = [];
                 var newArray = obj.SimilarProducts[0].SimilarProduct.map(function(e) {
                   e.linkASIN = obj.ASIN[0];
                   e.ASIN = e.ASIN[0];
-                  console.log(e.ASIN in seenHash)
+                  simProds.push(e.ASIN)
                   if (!(e.ASIN in seenHash)) {
-                    seenHash[e.ASIN] = true;
+                    seenHash[e.ASIN] = q.length;
                     someFlag = true;
                     q.push(e.ASIN);
+                    orderedProducts.push(e);
                   }
                   return e;
                 });
+                var simProds = simProds.map(function(e) {
+                  return seenHash[e];
+                })
+                graph.add([orderedProducts[this.index], simProds]);
                 // if (!someFlag) {throw new Error('flag did not toggle')}
                 if (!someFlag) {console.log('flag did not toggle')}
                 // console.log(newArray.length, "newArray.length", newArray.map(function(e) {return e.ASIN}));
@@ -224,8 +234,6 @@ function processQ(index) {
                 similarHash[hashCount] = product.product_id;
                 similarHT[product.product_id] = hashCount;
                 hashCount++;
-                var index = graph.al.length;
-                graph.al[index] = [product, simArray];
                 // console.log(graph.al);
                 // if (index % 15 === 0) {
                 //   console.log(graph.al[index]);
@@ -243,16 +251,10 @@ function processQ(index) {
 
                 //decrement number of total documents we want to return
                 numberOfDocuments--;
-                //
-                // console.log("i", i);
               }
             }
           }
         }
-        // if (i === simArray.length - 2) {
-        //   console.log("TOTAL TIME:", new Date().getTime() - t);
-        //   process.exit();
-        // }
         console.log('ONE CALL NOW', this.index, q.length);
         processQ(this.index + 1);
       }.bind(this));

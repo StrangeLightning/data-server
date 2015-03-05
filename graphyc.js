@@ -16,6 +16,12 @@ Graph.prototype._makeList = function(num) {
   return al;
 }
 
+Graph.prototype.add = function(element) {
+  // Add elements to the list
+  console.log(this.al);
+  this.al.push(element);
+};
+
 Graph.prototype.invertAdjacencyList = function() {
   var al = this.al;
   var c = 0;
