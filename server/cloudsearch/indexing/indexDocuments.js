@@ -26,7 +26,6 @@ exports.indexDocuments = function(data) {
   var obj = data[0];
   obj.adjacency_list = data[1];
   obj = [obj];
-  console.log(obj);
   var params = {
     contentType: 'application/json',
     documents: csd.cloudsearchifyDocuments(obj)
