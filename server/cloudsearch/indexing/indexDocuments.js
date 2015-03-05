@@ -23,9 +23,11 @@ var count = 0;
 var uniqueProductsContainer = {};
 
 exports.indexDocuments = function(data) {
+  var obj = data[0];
+  obj.adjacencyList = data[1];
   var params = {
     contentType: 'application/json',
-    documents: csd.cloudsearchifyDocuments(data)
+    documents: csd.cloudsearchifyDocuments(obj)
   };
 
   return cloudsearchdomain.uploadDocuments(params, function(err, data) {
