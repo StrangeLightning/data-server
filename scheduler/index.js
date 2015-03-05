@@ -1,1 +1,0 @@
-//logic to schedule indexing to MongoDB and CloudSearch
