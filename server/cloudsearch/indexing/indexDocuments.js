@@ -14,8 +14,7 @@ var seenHash = {};
 var simArray = [];
 var count = 0;
 var parCount = 0;
-var t = new Date().getTime();
-console.log(t);
+
 var adjacencyList = [];
 var graph = new graphyc.Graph([]);
 var numberOfDocuments = 100000;
@@ -26,7 +25,7 @@ exports.indexDocuments = function(data) {
   var obj = data[0];
   obj.adjacency_list = data[1];
   obj = [obj];
-  console.log(obj);
+
   var params = {
     contentType: 'application/json',
     documents: csd.cloudsearchifyDocuments(obj)
@@ -110,7 +109,7 @@ recurse = function(pageNo) {
     }
     var i = 0;
     var flag = false;
-    console.log(r2.length);
+
     while(r2 && r2[i] && i < r2.length && i < 15) {
       var obj = r2[i];
       var product = {};
@@ -175,16 +174,16 @@ recurse = function(pageNo) {
       //increment counter within while loop
       i++;
     }
-    console.log(q.length, "Queue");
+
     processQ(0);
   });
 };
 
 recurse(1);
-console.log('recurse');
+
 var someC = 0;
 function processQ(index) {
-  console.log("ParCount");
+
   this.index = index;
   var someC = 0;
   q.forEach(function(e) {
@@ -195,7 +194,7 @@ function processQ(index) {
   setTimeout(function(){
     var e = q[index];
     var element = q[index]
-    console.log("INDEX", e);
+
     if (!(e in seenHash) || 1){
       amazonProductApi.lookup(e, function(err, results) {
         if (results.ItemLookupErrorResponse && results.ItemLookupErrorResponse.Error) {
@@ -249,9 +248,8 @@ function processQ(index) {
 
                 var simProds = simProds.map(function(e) {
                   return seenHash[e];
-                })
+                });
 
-                if (!someFlag) {console.log('flag did not toggle')}
                 var product = {};
                 product.product_id = obj.ASIN[0];
                 product.price = parseInt(obj.ItemAttributes[0].ListPrice[0].Amount[0] / 100, 10);
@@ -276,7 +274,7 @@ function processQ(index) {
             }
           }
         }
-        console.log('ONE CALL NOW', this.index, q.length);
+
         processQ(this.index + 1);
       }.bind(this));
     }
