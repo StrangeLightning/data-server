@@ -149,9 +149,11 @@ recurse = function(pageNo) {
             product.category = obj.ItemAttributes[0].ProductGroup[0];
 
             // add coordinates to place products on screen as 3d models
-            product.x = 0;
-            product.y = 0;
-            product.z = 0;
+            product.x = q.length;
+            product.y = q.length;
+            product.z = q.length;
+
+            product.depth = 0;
 
             _results.push(product);
             orderedProducts.push(product);
@@ -162,7 +164,12 @@ recurse = function(pageNo) {
                 if (!(e.ASIN in seenHash)) {
                   seenHash[e.ASIN] = q.length;
                   q.push(e.ASIN);
+                  e.x = product.x + Math.floor((Math.random() - .5 )*1000000);
+                  e.y = product.y + Math.floor((Math.random() - .5 )*1000000);
+                  e.z = product.z + Math.floor((Math.random() - .5 )*1000000);
+                  e.depth = 1;
                   orderedProducts.push(e);
+                  console.log(e);
                   // graph.add(e, [])
                 }
             });
@@ -195,7 +202,6 @@ function processQ(index) {
   setTimeout(function(){
     var e = q[index];
     var element = q[index]
-    console.log("INDEX", e);
     if (!(e in seenHash) || 1){
       amazonProductApi.lookup(e, function(err, results) {
         if (results.ItemLookupErrorResponse && results.ItemLookupErrorResponse.Error) {
@@ -230,6 +236,8 @@ function processQ(index) {
               if(!uniqueProductsContainer[obj.ASIN[0]]) {
                 uniqueProductsContainer[obj.ASIN[0]] = true;
                 // similarHash[obj.ASIN[0]] = obj.SimilarProducts[0].SimilarProduct;
+                var fromOrderedProducts = orderedProducts[this.index];
+
                 var someFlag = false;
                 var simProds = [];
                 var newArray = obj.SimilarProducts[0].SimilarProduct.map(function(e) {
@@ -241,6 +249,10 @@ function processQ(index) {
                     var product = {};
                     seenHash[e.ASIN] = q.length;
                     someFlag = true;
+                    e.x = fromOrderedProducts.x;
+                    e.y = fromOrderedProducts.y;
+                    e.z = fromOrderedProducts.z;
+                    e.depth = fromOrderedProducts.depth + 1;
                     q.push(e.ASIN);
                     orderedProducts.push(e);
                   }
@@ -259,10 +271,14 @@ function processQ(index) {
                 product.img_url = obj.MediumImage[0].URL[0];
                 product.prod_attributes = JSON.stringify(obj.ItemAttributes[0]);
                 product.category = obj.ItemAttributes[0].ProductGroup[0];
-
+                product.x = fromOrderedProducts.x;
+                product.y = fromOrderedProducts.y;
+                product.z = fromOrderedProducts.z;
+                product.depth = fromOrderedProducts.depth;
+                product.adjacency_list = simProds;
                 // Add to orderedProducts and graph
-                orderedProducts[this.index] = product;
-                graph.add([orderedProducts[this.index], simProds]);
+                orderedProducts[this.index] = null;
+                graph.add([product, simProds]);
                 exports.indexDocuments(graph.al[graph.al.length - 1]);
 
                 similarHash[hashCount] = product.product_id;
