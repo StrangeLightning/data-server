@@ -168,7 +168,6 @@ recurse = function(pageNo) {
                   e.z = product.z + Math.floor((Math.random() - .5 )*1000000);
                   e.depth = 1;
                   orderedProducts.push(e);
-                  console.log(e);
                   // graph.add(e, [])
                 }
             });
