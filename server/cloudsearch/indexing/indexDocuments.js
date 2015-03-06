@@ -148,9 +148,9 @@ recurse = function(pageNo) {
             product.category = obj.ItemAttributes[0].ProductGroup[0];
 
             // add coordinates to place products on screen as 3d models
-            product.x = q.length;
-            product.y = q.length;
-            product.z = q.length;
+            product.x = Math.floor(Math.random()*500000);
+            product.y = Math.floor(Math.random()*300000);
+            product.z = Math.floor(Math.random()*500000);
 
             product.depth = 0;
 
@@ -163,11 +163,15 @@ recurse = function(pageNo) {
                 if (!(e.ASIN in seenHash)) {
                   seenHash[e.ASIN] = q.length;
                   q.push(e.ASIN);
-                  e.x = product.x + Math.floor((Math.random()*500000));
-                  e.y = product.y + Math.floor((Math.random()*300000));
-                  e.z = product.z + Math.floor((Math.random()*500000));
-                  console.log(e.x, e.y, e.z);
+                  e.x = Math.random()*500000;
+                  e.y = Math.random()*300000;
+                  e.z = Math.random()*500000;
                   e.depth = 1;
+
+                  e.x = Math.floor(e.x);
+                  e.y = Math.floor(e.y);
+                  e.z = Math.floor(e.z);
+
                   orderedProducts.push(e);
                   console.log(e);
                   // graph.add(e, [])
@@ -250,13 +254,17 @@ function processQ(index) {
                     var product = {};
                     seenHash[e.ASIN] = q.length;
                     someFlag = true;
-                    e.x = fromOrderedProducts.x;
-                    e.y = fromOrderedProducts.y;
-                    e.z = fromOrderedProducts.z;
+
                     var depth = fromOrderedProducts.depth;
-                    e.x = fromOrderedProducts.x + Math.floor((Math.random()*500000*depth));
-                    e.y = fromOrderedProducts.y + Math.floor((Math.random()*300000*depth));
-                    e.z = fromOrderedProducts.z + Math.floor((Math.random()*500000*depth));
+
+                    e.x = fromOrderedProducts.x + Math.random()*500000*depth;
+                    e.y = fromOrderedProducts.y + Math.random()*300000*depth;
+                    e.z = fromOrderedProducts.z + Math.random()*500000*depth;
+
+                    e.x = Math.floor(e.x);
+                    e.y = Math.floor(e.y);
+                    e.z = Math.floor(e.z);
+
                     e.depth = fromOrderedProducts.depth + 1;
                     console.log(e.x, e.y, e.z);
                     q.push(e.ASIN);
