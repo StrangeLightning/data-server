@@ -254,9 +254,9 @@ function processQ(index) {
                     e.y = fromOrderedProducts.y;
                     e.z = fromOrderedProducts.z;
                     var depth = fromOrderedProducts.depth;
-                    e.x = fromOrderedProducts.x + Math.floor((Math.random()*500000)*depth);
-                    e.y = fromOrderedProducts.y + Math.floor((Math.random()*300000)*depth);
-                    e.z = fromOrderedProducts.z + Math.floor((Math.random()*500000)*depth);
+                    e.x = fromOrderedProducts.x + Math.floor((Math.random()*500000*depth));
+                    e.y = fromOrderedProducts.y + Math.floor((Math.random()*300000*depth));
+                    e.z = fromOrderedProducts.z + Math.floor((Math.random()*500000*depth));
                     e.depth = fromOrderedProducts.depth + 1;
                     console.log(e.x, e.y, e.z);
                     q.push(e.ASIN);
