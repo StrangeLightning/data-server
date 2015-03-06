@@ -163,9 +163,9 @@ recurse = function(pageNo) {
                 if (!(e.ASIN in seenHash)) {
                   seenHash[e.ASIN] = q.length;
                   q.push(e.ASIN);
-                  e.x = product.x + Math.floor((Math.random() - .5 )*500000);
-                  e.y = product.y + Math.floor((Math.random() - .5 )*300000);
-                  e.z = product.z + Math.floor((Math.random() - .5 )*500000);
+                  e.x = product.x + Math.floor((Math.random())*500000);
+                  e.y = product.y + Math.floor((Math.random())*300000);
+                  e.z = product.z + Math.floor((Math.random())*500000);
 
                   e.depth = 1;
                   orderedProducts.push(e);
@@ -254,9 +254,9 @@ function processQ(index) {
                     e.y = fromOrderedProducts.y;
                     e.z = fromOrderedProducts.z;
                     var depth = fromOrderedProducts.depth;
-                    e.x = fromOrderedProducts.x + Math.floor((Math.random() - .5 )*500000)*depth;
-                    e.y = fromOrderedProducts.y + Math.floor((Math.random() - .5 )*300000)*depth;
-                    e.z = fromOrderedProducts.z + Math.floor((Math.random() - .5 )*500000)*depth;
+                    e.x = fromOrderedProducts.x + Math.floor((Math.random())*500000)*depth;
+                    e.y = fromOrderedProducts.y + Math.floor((Math.random())*300000)*depth;
+                    e.z = fromOrderedProducts.z + Math.floor((Math.random())*500000)*depth;
                     e.depth = fromOrderedProducts.depth + 1;
                     q.push(e.ASIN);
                     orderedProducts.push(e);
