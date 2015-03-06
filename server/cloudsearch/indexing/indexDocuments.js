@@ -14,8 +14,7 @@ var seenHash = {};
 var simArray = [];
 var count = 0;
 var parCount = 0;
-var t = new Date().getTime();
-console.log(t);
+
 var adjacencyList = [];
 var graph = new graphyc.Graph([]);
 var numberOfDocuments = 100000;
@@ -249,9 +248,8 @@ function processQ(index) {
 
                 var simProds = simProds.map(function(e) {
                   return seenHash[e];
-                })
+                });
 
-                if (!someFlag) {console.log('flag did not toggle')}
                 var product = {};
                 product.product_id = obj.ASIN[0];
                 product.price = parseInt(obj.ItemAttributes[0].ListPrice[0].Amount[0] / 100, 10);
@@ -276,7 +274,7 @@ function processQ(index) {
             }
           }
         }
-        console.log('ONE CALL NOW', this.index, q.length);
+
         processQ(this.index + 1);
       }.bind(this));
     }
