@@ -173,7 +173,6 @@ recurse = function(pageNo) {
                   e.z = Math.floor(e.z);
 
                   orderedProducts.push(e);
-                  console.log(e);
                   // graph.add(e, [])
                 }
             });
