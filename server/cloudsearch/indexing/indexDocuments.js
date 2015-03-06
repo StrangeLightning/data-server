@@ -26,7 +26,7 @@ exports.indexDocuments = function(data) {
   var obj = data[0];
   obj.adjacency_list = data[1];
   obj = [obj];
-  console.log(obj);
+
   var params = {
     contentType: 'application/json',
     documents: csd.cloudsearchifyDocuments(obj)
@@ -110,7 +110,7 @@ recurse = function(pageNo) {
     }
     var i = 0;
     var flag = false;
-    console.log(r2.length);
+
     while(r2 && r2[i] && i < r2.length && i < 15) {
       var obj = r2[i];
       var product = {};
@@ -175,16 +175,16 @@ recurse = function(pageNo) {
       //increment counter within while loop
       i++;
     }
-    console.log(q.length, "Queue");
+
     processQ(0);
   });
 };
 
 recurse(1);
-console.log('recurse');
+
 var someC = 0;
 function processQ(index) {
-  console.log("ParCount");
+
   this.index = index;
   var someC = 0;
   q.forEach(function(e) {
@@ -195,7 +195,7 @@ function processQ(index) {
   setTimeout(function(){
     var e = q[index];
     var element = q[index]
-    console.log("INDEX", e);
+
     if (!(e in seenHash) || 1){
       amazonProductApi.lookup(e, function(err, results) {
         if (results.ItemLookupErrorResponse && results.ItemLookupErrorResponse.Error) {
