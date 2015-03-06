@@ -9,6 +9,7 @@ exports.cloudsearchifyDocuments = function(allProducts) {
   //iterate over all health plans
   allProducts.forEach(function(product){
 
+
     // add type and id to very document to index, as required by Cloudsearch.
     // generate random unique hash for each id
     var csProduct = {

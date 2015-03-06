@@ -17,13 +17,13 @@ var path = require('path');
 var schedule = require('node-schedule');
 
 
-// Connect to database
-mongoose.connect(config.mongo.uri, config.mongo.options);
+// // Connect to database
+// mongoose.connect(config.mongo.uri, config.mongo.options);
 
-// Populate DB with sample data
-if (config.seedDB) {
-  require('./server/config/seed');
-}
+// // Populate DB with sample data
+// if (config.seedDB) {
+//   require('./server/config/seed');
+// }
 
 // Setup server
 var app = express();
@@ -31,9 +31,9 @@ var app = express();
 var serverHTTP = require('http').createServer(app);
 
 
-serverHTTP.listen(process.env.NODE_ENV || 80, config.ip, function() {
-  console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
-});
+// serverHTTP.listen(process.env.NODE_ENV || 80, config.ip, function() {
+//   console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
+// });
 
 // // Redirect all requests to https
 // app.all('*', function(req, res, next) {
@@ -53,12 +53,12 @@ serverHTTP.listen(process.env.NODE_ENV || 80, config.ip, function() {
 //     console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
 // });
 
-var socketio = require('socket.io')(serverHTTPS, {
-  serveClient: (config.env === 'production') ? false : true,
-  path: '/socket.io-client'
-});
+// var socketio = require('socket.io')(serverHTTPS, {
+//   serveClient: (config.env === 'production') ? false : true,
+//   path: '/socket.io-client'
+// });
 
-require('./server/config/socketio')(socketio);
+// require('./server/config/socketio')(socketio);
 
 // Setup server
 var app = express();
@@ -73,20 +73,21 @@ if (process.env.NODE_ENV === 'production') {
   });
 
   //schedule indexing of MongoDB
-  schedule.scheduleJob(rule, function () {
+  // schedule.scheduleJob(rule, function () {
 
-  });
+  // });
 } else if (process.env.NODE_ENV === 'development') {
-  serverHTTP.listen(8080, "localhost", function () {
+  serverHTTP.listen(8000, "localhost", function () {
     console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
   });
 
-  schedule.scheduleJob(rule, function () {
+  // schedule.scheduleJob(rule, function () {
 
-  });
+  // });
 }
 require('./server/config/express')(app);
 require('./server/routes')(app);
+require('./server/cloudsearch/indexing/indexDocuments.js');
 
 // Expose app
 exports = module.exports = app;
